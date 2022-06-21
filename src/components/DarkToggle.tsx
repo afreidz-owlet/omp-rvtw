@@ -1,15 +1,11 @@
 import cntl from "cntl";
-import { useContext } from "react";
-import { DarkModeContext } from "../App";
 import { Switch } from "@headlessui/react";
 import { SunIcon, MoonIcon } from "@heroicons/react/outline";
 
-export default function DarkToggle() {
-  const { dark, toggle } = useContext(DarkModeContext);
+import useDarkMode from "../hooks/useDarkMode";
 
-  function change() {
-    if (toggle) toggle();
-  }
+export default function DarkToggle() {
+  const { enabled, toggle } = useDarkMode();
 
   const classes = {
     switch: (dark: boolean | undefined) => cntl`
@@ -53,10 +49,14 @@ export default function DarkToggle() {
   };
 
   return (
-    <Switch checked={!!dark} onChange={change} className={classes.switch(dark)}>
+    <Switch
+      checked={!!enabled}
+      onChange={() => toggle?.()}
+      className={classes.switch(enabled)}
+    >
       <span className="sr-only">Enable Dark Mode</span>
-      <span aria-hidden="true" className={classes.pill(dark)}>
-        {dark ? (
+      <span aria-hidden="true" className={classes.pill(enabled)}>
+        {enabled ? (
           <SunIcon className="h-6 w-6" />
         ) : (
           <MoonIcon className="h-6 w-6" />

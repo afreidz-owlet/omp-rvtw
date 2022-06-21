@@ -1,50 +1,12 @@
 import cntl from "cntl";
-import { useLocation } from "react-router-dom";
+import { useEffect, useRef } from "react";
 import { SearchIcon } from "@heroicons/react/outline";
-import { useEffect, useRef, useState, createContext } from "react";
 
-interface ISearchContext {
-  placeholder?: string;
-  callback?: () => void;
-}
+import useSearch from "../hooks/useSearch";
 
-interface Props {
-  className?: string;
-}
-
-export const SearchContext = createContext<ISearchContext | null>({
-  placeholder: "Search",
-});
-
-export default function Search({ className }: Props) {
-  const location = useLocation();
+export default function Search({ className }: { className: string }) {
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const [searchContext, setSearchContext] = useState<ISearchContext | null>(
-    null
-  );
-
-  useEffect(() => {
-    switch (location.pathname) {
-      case "/devices":
-        setSearchContext({
-          placeholder: "Search for Device by DSN",
-        });
-        break;
-      case "/accounts":
-        setSearchContext({
-          placeholder: "Search for Account by Email, First Name, or Last Name",
-        });
-        break;
-      case "/employees":
-        setSearchContext({
-          placeholder: "Search for Employee by Email, First Name, or Last Name",
-        });
-        break;
-      default:
-        setSearchContext(null);
-        break;
-    }
-  }, [location]);
+  const searchContext = useSearch();
 
   const inputClasses = cntl`
     mr-4

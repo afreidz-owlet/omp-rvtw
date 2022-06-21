@@ -1,27 +1,14 @@
 import cntl from "cntl";
-import { useState, createContext } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import Nav from "./components/Nav";
-import Menu from './components/Menu';
+import Menu from "./components/Menu";
 import Search from "./components/Search";
+import useDarkMode from "./hooks/useDarkMode";
 import DarkToggle from "./components/DarkToggle";
 
-interface IDarkModeContext {
-  dark?: boolean;
-  toggle?: () => void;
-}
-
-export const DarkModeContext = createContext<IDarkModeContext>({});
-
 function App() {
-  const [darkEnabled, setDarkEnabled] = useState(false);
-  const darkModeContextValue = { dark: darkEnabled, toggle: toggleDarkMode };
-  
-  function toggleDarkMode() {
-    setDarkEnabled(!darkEnabled);
-  }
-
+  const darkMode = useDarkMode();
   const classes = {
     app: (dark: boolean) => cntl`
       flex
@@ -96,40 +83,38 @@ function App() {
   };
 
   return (
-    <DarkModeContext.Provider value={darkModeContextValue}>
-        <div id="app" className={classes.app(darkEnabled)}>
-          <header className={classes.header}>
-            <figure className={classes.logo}>
-              <Menu/>
-            </figure>
-            <Search className="grow place-self-stretch ml-4" />
-            <div className="w-16 flex-none mr-4">
-              <DarkToggle />
-            </div>
-          </header>
-          <main className={classes.main}>
-            <nav className={classes.nav}>
-              <h1 className="p-4 text-center text-sm uppercase opacity-50">
-                <span className="lg:hidden">OMP</span>
-                <span className="hidden lg:inline">Management Portal</span>
-              </h1>
-              <Nav />
-            </nav>
-            <section className="flex grow flex-col p-8 dark:text-white">
-              <Routes>
-                <Route
-                  path="/"
-                  element={<Navigate replace={true} to="/devices" />}
-                />
-                <Route path="/devices" element={<h2>Devices</h2>} />
-                <Route path="/accounts" element={<h2>Accounts</h2>} />
-                <Route path="/employees" element={<h2>Employees</h2>} />
-                <Route path="/manufacturing" element={<h2>Manufacturing</h2>} />
-              </Routes>
-            </section>
-          </main>
+    <div id="app" className={classes.app(darkMode.enabled)}>
+      <header className={classes.header}>
+        <figure className={classes.logo}>
+          <Menu />
+        </figure>
+        <Search className="ml-4 grow place-self-stretch" />
+        <div className="mr-4 w-16 flex-none">
+          <DarkToggle />
         </div>
-    </DarkModeContext.Provider>
+      </header>
+      <main className={classes.main}>
+        <nav className={classes.nav}>
+          <h1 className="p-4 text-center text-sm uppercase opacity-50">
+            <span className="lg:hidden">OMP</span>
+            <span className="hidden lg:inline">Management Portal</span>
+          </h1>
+          <Nav />
+        </nav>
+        <section className="flex grow flex-col p-8 dark:text-white">
+          <Routes>
+            <Route
+              path="/"
+              element={<Navigate replace={true} to="/devices" />}
+            />
+            <Route path="/devices" element={<h2>Devices</h2>} />
+            <Route path="/accounts" element={<h2>Accounts</h2>} />
+            <Route path="/employees" element={<h2>Employees</h2>} />
+            <Route path="/manufacturing" element={<h2>Manufacturing</h2>} />
+          </Routes>
+        </section>
+      </main>
+    </div>
   );
 }
 
