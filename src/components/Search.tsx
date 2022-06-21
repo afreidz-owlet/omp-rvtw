@@ -1,17 +1,50 @@
 import cntl from "cntl";
+import { useLocation } from "react-router-dom";
 import { SearchIcon } from "@heroicons/react/outline";
-import { useEffect, useRef, useContext, useState } from "react";
+import { useEffect, useRef, useState, createContext } from "react";
 
-import { SearchContext } from "../App";
+interface ISearchContext {
+  placeholder?: string;
+  callback?: () => void;
+}
 
 interface Props {
   className?: string;
 }
 
+export const SearchContext = createContext<ISearchContext | null>({
+  placeholder: "Search",
+});
+
 export default function Search({ className }: Props) {
-  const searchContext = useContext(SearchContext);
+  const location = useLocation();
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const [placeholder, setPlaceholder] = useState(searchContext?.placeholder);
+  const [searchContext, setSearchContext] = useState<ISearchContext | null>(
+    null
+  );
+
+  useEffect(() => {
+    switch (location.pathname) {
+      case "/devices":
+        setSearchContext({
+          placeholder: "Search for Device by DSN",
+        });
+        break;
+      case "/accounts":
+        setSearchContext({
+          placeholder: "Search for Account by Email, First Name, or Last Name",
+        });
+        break;
+      case "/employees":
+        setSearchContext({
+          placeholder: "Search for Employee by Email, First Name, or Last Name",
+        });
+        break;
+      default:
+        setSearchContext(null);
+        break;
+    }
+  }, [location]);
 
   const inputClasses = cntl`
     mr-4
@@ -20,14 +53,13 @@ export default function Search({ className }: Props) {
     place-self-stretch
     focus:outline-none
     dark:bg-transparent
-  `
+  `;
 
   useEffect(() => {
-    setPlaceholder(searchContext?.placeholder);
     searchInputRef.current && searchInputRef.current.focus();
   }, [searchContext]);
 
-  if (!placeholder) return <div className={className}/>;
+  if (!searchContext?.placeholder) return <div className={className} />;
 
   return (
     <label className={`${className} flex items-center`}>
@@ -35,7 +67,7 @@ export default function Search({ className }: Props) {
       <input
         ref={searchInputRef}
         className={inputClasses}
-        placeholder={placeholder}
+        placeholder={searchContext.placeholder}
       />
     </label>
   );

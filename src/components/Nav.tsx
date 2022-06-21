@@ -10,17 +10,20 @@ import { NavLink } from "react-router-dom";
 export default function Nav() {
   const classes = {
     li: cntl`mb-px`,
-    text: cntl`hidden lg:block`,
+    text: cntl`sm:hidden lg:block`,
     icon: cntl`w-8 lg:w-6 flex-none mx-4`,
     link: (isActive: boolean) => cntl`
       py-2
       flex
       opacity-50
+      border-l-0
       ease-in-out
       duration-200
+      items-center
       lg:border-l-4
-      justify-center
+      justify-start
       lg:justify-start
+      sm:justify-center
       hover:opacity-100
       transition-colors
       border-transparent
@@ -48,7 +51,7 @@ export default function Nav() {
           <span className={classes.text}>Devices</span>
         </NavLink>
       </li>
-      <li className={classes.li}>
+      <li className="mb-px">
         <NavLink
           to="/accounts"
           className={({ isActive }) => classes.link(isActive)}
@@ -57,7 +60,7 @@ export default function Nav() {
           <span className={classes.text}>Accounts</span>
         </NavLink>
       </li>
-      <li className={classes.li}>
+      <li className="mb-px">
         <NavLink
           to="/employees"
           className={({ isActive }) => classes.link(isActive)}
@@ -66,7 +69,7 @@ export default function Nav() {
           <span className={classes.text}>Employees</span>
         </NavLink>
       </li>
-      <li className={classes.li}>
+      <li className="mb-px">
         <NavLink
           to="/manufacturing"
           className={({ isActive }) => classes.link(isActive)}
