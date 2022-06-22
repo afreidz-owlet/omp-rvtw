@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useContext } from "react";
 
 interface IDarkModeContext {
   enabled: boolean;
@@ -26,3 +26,5 @@ export default function DarkModeProvider({
     </DarkModeContext.Provider>
   );
 }
+
+export const useDarkMode = () => useContext(DarkModeContext);

@@ -4,8 +4,8 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Nav from "./components/Nav";
 import Menu from "./components/Menu";
 import Search from "./components/Search";
-import useDarkMode from "./hooks/useDarkMode";
 import DarkToggle from "./components/DarkToggle";
+import { useDarkMode } from "./contexts/DarkMode";
 
 function App() {
   const darkMode = useDarkMode();
@@ -83,7 +83,11 @@ function App() {
   };
 
   return (
-    <div id="app" className={classes.app(darkMode.enabled)}>
+    <div
+      id="app"
+      className={classes.app(darkMode.enabled)}
+      role={`app-${darkMode.enabled ? "dark" : "light"}`}
+    >
       <header className={classes.header}>
         <figure className={classes.logo}>
           <Menu />

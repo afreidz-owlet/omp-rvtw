@@ -2,7 +2,7 @@ import cntl from "cntl";
 import { Switch } from "@headlessui/react";
 import { SunIcon, MoonIcon } from "@heroicons/react/outline";
 
-import useDarkMode from "../hooks/useDarkMode";
+import { useDarkMode } from "../contexts/DarkMode";
 
 export default function DarkToggle() {
   const { enabled, toggle } = useDarkMode();
@@ -54,7 +54,9 @@ export default function DarkToggle() {
       onChange={() => toggle?.()}
       className={classes.switch(enabled)}
     >
-      <span className="sr-only">Enable Dark Mode</span>
+      <span className="sr-only">
+        {enabled ? "Disable" : "Enable"} Dark Mode
+      </span>
       <span aria-hidden="true" className={classes.pill(enabled)}>
         {enabled ? (
           <SunIcon className="h-6 w-6" />

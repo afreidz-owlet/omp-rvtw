@@ -1,5 +1,5 @@
-import { useLocation } from 'react-router-dom'
-import { createContext, useState, useEffect } from 'react'
+import { useLocation } from "react-router-dom";
+import { createContext, useState, useEffect, useContext } from "react";
 
 interface ISearchContext {
   placeholder?: string;
@@ -45,3 +45,5 @@ export default function Provider({ children }: { children: JSX.Element }) {
     </SearchContext.Provider>
   );
 }
+
+export const useSearch = () => useContext(SearchContext);

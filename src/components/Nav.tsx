@@ -44,6 +44,7 @@ export default function Nav() {
     <ul>
       <li className={classes.li}>
         <NavLink
+          role="link"
           to="/devices"
           className={({ isActive }) => classes.link(isActive)}
         >
@@ -53,6 +54,7 @@ export default function Nav() {
       </li>
       <li className="mb-px">
         <NavLink
+          role="link"
           to="/accounts"
           className={({ isActive }) => classes.link(isActive)}
         >
@@ -62,6 +64,7 @@ export default function Nav() {
       </li>
       <li className="mb-px">
         <NavLink
+          role="link"
           to="/employees"
           className={({ isActive }) => classes.link(isActive)}
         >
@@ -71,6 +74,7 @@ export default function Nav() {
       </li>
       <li className="mb-px">
         <NavLink
+          role="link"
           to="/manufacturing"
           className={({ isActive }) => classes.link(isActive)}
         >
