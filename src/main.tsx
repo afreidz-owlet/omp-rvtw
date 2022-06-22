@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 
 import SearchContext from "./contexts/Search";
-import DarkModeContext from "./contexts/DarkMode"
+import DarkModeContext from "./contexts/DarkMode";
 
 import "./index.css";
 import App from "./App";

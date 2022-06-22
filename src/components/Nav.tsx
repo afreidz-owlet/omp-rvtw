@@ -1,7 +1,7 @@
 import cntl from "cntl";
 import {
   UserIcon,
-  QrcodeIcon,
+  TruckIcon,
   UserGroupIcon,
   DeviceMobileIcon,
 } from "@heroicons/react/outline";
@@ -78,7 +78,7 @@ export default function Nav() {
           to="/manufacturing"
           className={({ isActive }) => classes.link(isActive)}
         >
-          <QrcodeIcon className={classes.icon} />
+          <TruckIcon className={classes.icon} />
           <span className={classes.text}>Manufacturing</span>
         </NavLink>
       </li>
