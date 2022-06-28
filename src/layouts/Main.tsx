@@ -3,10 +3,12 @@ import cntl from "cntl";
 import Nav from "../components/Nav";
 import Menu from "../components/Menu";
 import Search from "../components/Search";
+import { useAuth } from "../contexts/Auth";
 import DarkToggle from "../components/DarkToggle";
 import { useDarkMode } from "../contexts/DarkMode";
 
 export default function MainLayout({ children }: { children?: JSX.Element }) {
+  const auth = useAuth();
   const darkMode = useDarkMode();
   const classes = {
     app: (dark: boolean) => cntl`
@@ -92,6 +94,11 @@ export default function MainLayout({ children }: { children?: JSX.Element }) {
           <Menu />
         </figure>
         <Search className="ml-4 grow place-self-stretch" />
+        <div className="mr-4 w-8 flex-none flex items-center">
+          <button onClick={() => auth?.signout?.()} className="rounded-full overflow-hidden">
+            <img className="w-full" src={auth?.user?.photoURL || ""} referrerPolicy="no-referrer" />
+          </button>
+        </div>
         <div className="mr-4 w-16 flex-none">
           <DarkToggle />
         </div>

@@ -6,7 +6,7 @@ const wrapper = ({ children }: { children: JSX.Element }) => (
   <DarkModeContext>{children}</DarkModeContext>
 );
 
-describe("<SearchContext/>", () => {
+describe("Dark Mode Context", () => {
   it("Should have a default state", () => {
     const { result } = renderHook(() => useDarkMode(), { wrapper });
     expect(result.current.enabled).toBe(false);

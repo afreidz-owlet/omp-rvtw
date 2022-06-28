@@ -13,7 +13,14 @@ export default defineConfig({
       all: true,
       src: ["./src"],
       reporter: ["text", "html"],
-      exclude: ["**/*.d.ts", "src/test.setup.ts", "src/main.tsx"],
+      exclude: [
+        "**/*.d.ts",
+        "src/pages",
+        "**/*.test.*",
+        "src/main.tsx",
+        "src/test.setup.ts",
+        "src/components/icons",
+      ],
     },
   },
 });

@@ -10,7 +10,7 @@ const wrapper = ({ children }: { children: JSX.Element }) => (
   </MemoryRouter>
 );
 
-describe("<SearchContext/>", () => {
+describe("Search Context", () => {
   it("Should have a default state", () => {
     const { result } = renderHook(() => useSearch());
     expect(result.current?.placeholder).toBeDefined();

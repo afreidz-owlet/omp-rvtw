@@ -5,7 +5,7 @@ interface IDarkModeContext {
   toggle?: () => void;
 }
 
-export const DarkModeContext = createContext<IDarkModeContext>({
+const DarkModeContext = createContext<IDarkModeContext>({
   enabled: false,
 });
 

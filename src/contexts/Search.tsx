@@ -6,7 +6,7 @@ interface ISearchContext {
   callback?: () => void;
 }
 
-export const SearchContext = createContext<ISearchContext | null>({
+const SearchContext = createContext<ISearchContext | null>({
   placeholder: "Search",
 });
 

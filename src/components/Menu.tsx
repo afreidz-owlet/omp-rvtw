@@ -2,8 +2,8 @@ import cntl from "cntl";
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 
-import Owl from "./Owl";
 import Nav from "./Nav";
+import Owl from "./icons/Owl";
 
 export default function NavMenu() {
   const itemsClasses = cntl`
