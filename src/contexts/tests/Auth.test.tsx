@@ -1,6 +1,6 @@
 import { User } from "firebase/auth";
 import { MockedFunction } from "vitest";
-import { renderHook } from "@testing-library/react";
+import { fireEvent, renderHook, createEvent } from "@testing-library/react";
 import { useAuthState, useSignInWithGoogle } from "react-firebase-hooks/auth";
 
 const mockInit = vi.fn();
@@ -148,5 +148,43 @@ describe("Authentication Context", () => {
     ]);
     renderHook(() => useAuth(), { wrapper });
     expect(mockNotify).toHaveBeenCalledWith("test");
+  });
+
+  it("should handle idle", () => {
+    mockSignOut.mockReset();
+    (useAuthState as MockedFunction<any>).mockReturnValue([
+      mockUser,
+      false,
+      undefined,
+    ]);
+    renderHook(() => useAuth(), { wrapper });
+
+    Object.defineProperty(document, "visibilityState", {
+      value: "hidden",
+      writable: true,
+    });
+    const idleEvent = createEvent("visibilitychange", document, {});
+    fireEvent(document, idleEvent);
+
+    Object.defineProperty(document, "visibilityState", {
+      value: "visible",
+      writable: true,
+    });
+    const activeEvent = createEvent("visibilitychange", document, {});
+    fireEvent(document, activeEvent);
+
+    expect(mockSignOut).not.toHaveBeenCalled();
+
+    vi.useFakeTimers();
+    Object.defineProperty(document, "visibilityState", {
+      value: "hidden",
+      writable: true,
+    });
+    const idleEvent2 = createEvent("visibilitychange", document, {});
+    fireEvent(document, idleEvent2);
+    vi.runAllTimers();
+
+    expect(mockSignOut).toHaveBeenCalled();
+    vi.useRealTimers();
   });
 });

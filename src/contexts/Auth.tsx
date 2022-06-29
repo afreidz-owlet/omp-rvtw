@@ -21,6 +21,8 @@ export const AuthContext = createContext<IAuthContext | undefined>({
 
 export default function Provider({ children }: { children: JSX.Element }) {
   const notify = useNotifications();
+  const tenMinutes = (1000 * 60) * 10;
+  const [timer, setTimer] = useState<any>();
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<User | undefined | null>();
 
@@ -51,6 +53,15 @@ export default function Provider({ children }: { children: JSX.Element }) {
     return signOut(cache.get("FBAUTH"));
   }
 
+  function signoutWhenIdle() {
+    clearTimeout(timer);
+    setTimer(undefined);
+    if (document.visibilityState === "hidden") {
+      const newTimer = setTimeout(() => signout(), tenMinutes);
+      setTimer(newTimer);
+    }
+  }
+
   useEffect(() => {
     if (
       userState &&
@@ -63,8 +74,10 @@ export default function Provider({ children }: { children: JSX.Element }) {
     } else {
       setUser(userState);
       navigate("/devices");
+      document.addEventListener("visibilitychange", signoutWhenIdle);
     }
-  }, [userState, notify]);
+    return () => document.removeEventListener("visibilitychange", signoutWhenIdle);
+  }, [userState, notify, timer]);
 
   useEffect(() => {
     setLoading(loadingState);
