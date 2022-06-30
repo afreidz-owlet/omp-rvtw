@@ -1,4 +1,5 @@
 import cntl from "cntl";
+import { useNavigate } from "react-router-dom";
 
 import Owl from "../components/icons/Owl";
 import { useAuth } from "../contexts/Auth";
@@ -7,6 +8,13 @@ import DarkToggle from "../components/DarkToggle";
 
 export default function AuthPage(props: React.HTMLProps<HTMLElement>) {
   const auth = useAuth();
+  const navigate = useNavigate();
+
+  function handleSignin() {
+    auth?.signin?.(() => {
+      navigate("/", { replace: true });
+    });
+  }
 
   const classes = {
     section: cntl`
@@ -36,7 +44,7 @@ export default function AuthPage(props: React.HTMLProps<HTMLElement>) {
       <h1 className="p-4 text-center text-2xl font-light uppercase opacity-80">
         Owlet Management Portal
       </h1>
-      <button className={classes.button} onClick={() => auth?.signin?.()}>
+      <button className={classes.button} onClick={() => handleSignin()}>
         <Google className="mr-2 h-6 w-6 pt-1" /> Sign In with Google
       </button>
       <div className="mt-3 flex grow flex-col justify-end">

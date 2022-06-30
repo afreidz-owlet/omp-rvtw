@@ -1,8 +1,9 @@
 import cntl from "cntl";
 import {
-  UserIcon,
+  HandIcon,
   TruckIcon,
   UserGroupIcon,
+  UserCircleIcon,
   DeviceMobileIcon,
 } from "@heroicons/react/outline";
 import { NavLink } from "react-router-dom";
@@ -34,8 +35,7 @@ export default function Nav() {
         cntl`
         opacity-100
         border-white
-        bg-neutral-0/5
-      `
+        bg-neutral-0/5`
       }
     `,
   };
@@ -58,7 +58,7 @@ export default function Nav() {
           to="/accounts"
           className={({ isActive }) => classes.link(isActive)}
         >
-          <UserIcon className={classes.icon} />
+          <UserCircleIcon className={classes.icon} />
           <span className={classes.text}>Accounts</span>
         </NavLink>
       </li>
@@ -70,6 +70,16 @@ export default function Nav() {
         >
           <UserGroupIcon className={classes.icon} />
           <span className={classes.text}>Employees</span>
+        </NavLink>
+      </li>
+      <li className="mb-px">
+        <NavLink
+          role="link"
+          to="/roles"
+          className={({ isActive }) => classes.link(isActive)}
+        >
+          <HandIcon className={classes.icon} />
+          <span className={classes.text}>Roles</span>
         </NavLink>
       </li>
       <li className="mb-px">

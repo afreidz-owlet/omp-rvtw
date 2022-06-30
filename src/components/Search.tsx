@@ -21,7 +21,8 @@ export default function Search({ className }: { className?: string }) {
     searchInputRef.current && searchInputRef.current.focus();
   }, [searchContext]);
 
-  if (!searchContext?.placeholder) return <div role="no-search" className={className} />;
+  if (!searchContext?.placeholder)
+    return <div role="no-search" className={className} />;
 
   return (
     <label className={`${className} flex items-center`}>

@@ -6,6 +6,6 @@ html,body {
   background: black;
 }
 
-#root {
+#⚛️ {
   @apply flex flex-col h-screen p-1;
 }

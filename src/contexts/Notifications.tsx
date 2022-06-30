@@ -13,7 +13,7 @@ export default function Provider({ children }: { children: JSX.Element }) {
 
   const dismiss = useCallback(() => {
     setNotifications(notifications => {
-      const [_, ...rest] = notifications;
+      const [, ...rest] = notifications;
       return [...rest];
     })
   }, []);

@@ -40,9 +40,7 @@ export default function SplashLayout({ children }: { children?: JSX.Element }) {
       className={classes.app(darkMode.enabled)}
       role={`app-${darkMode.enabled ? "dark" : "light"}`}
     >
-      <main className={classes.main}>
-        {children}
-      </main>
+      <main className={classes.main}>{children}</main>
     </div>
   );
 }
