@@ -45,3 +45,19 @@ export default function TextField({ id, label, ...rest }: ITextFieldProps) {
     </>
   );
 }
+
+if (import.meta.vitest) {
+  const { it, expect } = import.meta.vitest;
+  const { render } = await import("@testing-library/react");
+
+  it("should handle labels", () => {
+    const { container } = render(<TextField id="test-field" />);
+    expect(container.getElementsByTagName("label").length).toBe(0);
+    const { container: container2 } = render(
+      <TextField id="test-field-2" label="label" />
+    );
+    expect(container2.getElementsByTagName("label").length).toBe(1);
+    expect(container2.getElementsByTagName("input").length).toBe(1);
+    expect(container.getElementsByTagName("input").length).toBe(1);
+  });
+}

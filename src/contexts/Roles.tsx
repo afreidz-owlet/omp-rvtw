@@ -61,6 +61,7 @@ export default function Provider({ children }: { children: React.ReactNode }) {
       await db.updateRole(role, permission, state);
       const dbRoles = await db.getRoles();
       const dbPerms = await db.getPermissions();
+      console.log(dbRoles, dbPerms);
       setRoles(dbRoles);
       setPermissions(dbPerms);
       setLoading(false);

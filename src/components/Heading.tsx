@@ -45,3 +45,29 @@ const Heading = <C extends React.ElementType = "h2">({
 };
 
 export default Heading;
+
+if (import.meta.vitest) {
+  const { it, expect } = import.meta.vitest;
+  const { render } = await import("@testing-library/react");
+
+  it("should handle variants", () => {
+    const { container: heading1 } = render(<Heading type="page">test</Heading>);
+    const { container: heading2 } = render(<Heading type="page">test</Heading>);
+    const { container: heading3 } = render(<Heading type="sub">test</Heading>);
+    const { container: heading4 } = render(
+      <Heading type="section">test</Heading>
+    );
+    expect(heading1.innerHTML).toEqual(heading2.innerHTML);
+    expect(heading3.innerHTML).not.toEqual(heading1.innerHTML);
+    expect(heading4.innerHTML).not.toEqual(heading2.innerHTML);
+  });
+
+  it("should render a different element if specified", () => {
+    const { getByText } = render(
+      <Heading as="nav" type="page">
+        test content
+      </Heading>
+    );
+    expect(getByText("test content").tagName).toBe("NAV");
+  });
+}

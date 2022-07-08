@@ -11,18 +11,20 @@ import {
 const auth = adapters.get("FBAUTH");
 const provider = new GoogleAuthProvider();
 
-async function signin(callback: VoidFunction) {
+export async function signin(callback: VoidFunction) {
   await signInWithPopup(auth, provider);
   callback();
 }
 
-async function signOut(callback: VoidFunction) {
+export async function signOut(callback: VoidFunction) {
   await fbSignOut(auth);
   callback();
 }
 
-function onAuthChange(callback: (user: User | null) => void) {
-  onAuthStateChanged(auth, (user) => callback(user));
+export function onAuthChange(callback: (user: User | null) => void) {
+  onAuthStateChanged(auth, callback);
 }
 
-export { signin, onAuthChange, signOut, deleteUser };
+export { deleteUser } from "firebase/auth";
+
+export default { signin, onAuthChange, signOut, deleteUser };

@@ -5,6 +5,7 @@ import { Dialog } from "@headlessui/react";
 import { FormEvent, useState } from "react";
 import Heading from "../components/Heading";
 import { useRoles } from "../contexts/Roles";
+import Checkbox from "../components/Checkbox";
 import TextField from "../components/TextField";
 import { useDarkMode } from "../contexts/DarkMode";
 import { IRole, IPermission } from "../adapters/db";
@@ -95,11 +96,13 @@ export default function RolesPage() {
     stickyCol: cntl`
       ${shadowXClass}
       p-4 
+      flex
       sticky 
       left-0 
       border 
       border-t-0 
       bg-neutral-0 
+      items-center
       [border-color:inherit]
       dark:bg-secondary-blue-890
 `,
@@ -191,11 +194,10 @@ export default function RolesPage() {
                 <div className={classes.stickyCol}>{p.title}</div>
                 {roles.map((r) => (
                   <div className={classes.cell} key={`${r.id}-${p.id}`}>
-                    <input
-                      type="checkbox"
+                    <Checkbox
                       checked={r.permissions?.includes(p.id || "")}
-                      onChange={(e) =>
-                        handlePermissionChange(r, p, e.target.checked)
+                      changeHandler={(checked: boolean) =>
+                        handlePermissionChange(r, p, checked)
                       }
                     />
                   </div>

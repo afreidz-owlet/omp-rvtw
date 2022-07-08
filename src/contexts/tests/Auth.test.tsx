@@ -1,5 +1,10 @@
 import { User } from "firebase/auth";
-import { fireEvent, renderHook, createEvent } from "@testing-library/react";
+import {
+  fireEvent,
+  renderHook,
+  createEvent,
+  act,
+} from "@testing-library/react";
 
 type AuthChangeCB = (u: User | null) => void;
 
@@ -108,7 +113,11 @@ describe("Authentication Context", () => {
 
     const { result } = renderHook(() => useAuth(), { wrapper });
     expect(mockSignOut).not.toHaveBeenCalled();
-    result.current?.signout?.();
+
+    act(() => {
+      result.current?.signout?.();
+    });
+
     expect(mockSignOut).toHaveBeenCalled();
   });
 
@@ -123,14 +132,20 @@ describe("Authentication Context", () => {
       writable: true,
     });
     const idleEvent = createEvent("visibilitychange", document, {});
-    fireEvent(document, idleEvent);
+
+    act(() => {
+      fireEvent(document, idleEvent);
+    });
 
     Object.defineProperty(document, "visibilityState", {
       value: "visible",
       writable: true,
     });
     const activeEvent = createEvent("visibilitychange", document, {});
-    fireEvent(document, activeEvent);
+
+    act(() => {
+      fireEvent(document, activeEvent);
+    });
 
     expect(mockSignOut).not.toHaveBeenCalled();
 
@@ -140,7 +155,10 @@ describe("Authentication Context", () => {
       writable: true,
     });
     const idleEvent2 = createEvent("visibilitychange", document, {});
-    fireEvent(document, idleEvent2);
+
+    act(() => {
+      fireEvent(document, idleEvent2);
+    });
     vi.runAllTimers();
 
     expect(mockSignOut).toHaveBeenCalled();

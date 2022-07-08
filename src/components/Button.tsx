@@ -49,3 +49,16 @@ export default function Button({
     </button>
   );
 }
+
+if (import.meta.vitest) {
+  const { it, expect } = import.meta.vitest;
+  const { render } = await import("@testing-library/react");
+
+  it("should handle variants", () => {
+    const { container: button1 } = render(<Button>test</Button>);
+    const { container: button2 } = render(<Button>test</Button>);
+    const { container: button3 } = render(<Button variant="text">test</Button>);
+    expect(button1.innerHTML).toEqual(button2.innerHTML);
+    expect(button3.innerHTML).not.toEqual(button1.innerHTML);
+  });
+}
