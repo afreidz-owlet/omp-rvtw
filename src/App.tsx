@@ -1,11 +1,13 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 
 import Auth from "./pages/Auth";
+import Roles from "./pages/Roles";
 import MainLayout from "./layouts/Main";
 import { useAuth } from "./contexts/Auth";
 import SplashLayout from "./layouts/Splash";
 
 import AuthProvider from "./contexts/Auth";
+import RolesProvider from "./contexts/Roles";
 import DarkModeProvider from "./contexts/DarkMode";
 import NotificationProvider from "./contexts/Notifications";
 
@@ -17,23 +19,28 @@ interface IPageProps {
 
 function Page({ protect, children, layout }: IPageProps) {
   const Layout = layout;
+  const location = useLocation();
   const { authenticated, loading } = useAuth();
-  if (loading)
+
+  if (loading) {
     return (
       <Layout>
-        <strong>Loading...</strong>
+        <strong data-testid="loading-page">Loading...</strong>
       </Layout>
     );
-  if (!authenticated && protect) return <Navigate to="/authenticate" replace />;
+  } else if (!authenticated && protect) {
+    return <Navigate to="/authenticate" state={{ from: location }} replace />;
+  } else {
+    return <Layout>{children}</Layout>;
+  }
 
-  return <Layout>{children}</Layout>;
 }
 
 function AuthPage() {
   return (
-    <Page layout={SplashLayout}>
+    <SplashLayout>
       <Auth data-testid="auth-page" />
-    </Page>
+    </SplashLayout>
   );
 }
 
@@ -64,7 +71,9 @@ function EmployeesPage() {
 function RolesPage() {
   return (
     <Page layout={MainLayout} protect>
-      <h2 data-testid="roles-page">Roles</h2>
+      <RolesProvider>
+        <Roles data-testid="roles-page" />
+      </RolesProvider>
     </Page>
   );
 }

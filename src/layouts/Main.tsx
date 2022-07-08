@@ -4,6 +4,7 @@ import Nav from "../components/Nav";
 import Menu from "../components/Menu";
 import Search from "../components/Search";
 import { useAuth } from "../contexts/Auth";
+import Heading from "../components/Heading";
 import SearchProvider from "../contexts/Search";
 import DarkToggle from "../components/DarkToggle";
 import { useDarkMode } from "../contexts/DarkMode";
@@ -109,19 +110,19 @@ export default function MainLayout({ children }: { children?: JSX.Element }) {
             />
           </button>
         </div>
-        <div className="mr-4 w-16 flex-none">
+        <div className="mr-6 w-16 flex-none">
           <DarkToggle />
         </div>
       </header>
       <main className={classes.main}>
         <nav className={classes.nav}>
-          <h1 className="p-4 text-center text-sm uppercase opacity-50">
+          <Heading as="h1" className="p-4 text-center" type="sub">
             <span className="lg:hidden">OMP</span>
             <span className="hidden lg:inline">Management Portal</span>
-          </h1>
+          </Heading>
           <Nav />
         </nav>
-        <section className="flex grow flex-col p-8 dark:text-white">
+        <section className="grow flex flex-col overflow-auto dark:text-neutral-0">
           {children}
         </section>
       </main>

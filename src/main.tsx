@@ -5,7 +5,11 @@ import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import App from "./App";
 
-ReactDOM.createRoot(document.getElementById("⚛️")).render(
+const mount = document.getElementById("⚛️");
+if (!mount) throw new Error("failed ot find the root for React");
+const root = ReactDOM.createRoot(mount);
+
+root.render(
   <React.StrictMode>
     <BrowserRouter>
       <App />

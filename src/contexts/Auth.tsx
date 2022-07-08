@@ -1,10 +1,15 @@
-import { initializeApp } from "firebase/app";
-import { getAuth, User, signOut, deleteUser } from "firebase/auth";
-import { createContext, useContext, useEffect, useState } from "react";
-import { useAuthState, useSignInWithGoogle } from "react-firebase-hooks/auth";
+import { User } from "firebase/auth";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
-import cache from "../cache";
+import adapters from "../adapters";
 import { useNotifications } from "./Notifications";
+import { signin, signOut, onAuthChange, deleteUser } from "../adapters/auth";
 
 export interface IAuthContext {
   loading?: boolean;
@@ -22,82 +27,56 @@ export const AuthContext = createContext<IAuthContext>({
 
 export default function Provider({ children }: { children: JSX.Element }) {
   const notify = useNotifications();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
   const [user, setUser] = useState<User | undefined | null>();
 
-  if (!cache.has("FBAPP")) {
-    cache.set(
-      "FBAPP",
-      initializeApp({
-        appId: import.meta.env.VITE_FIREBASE_APP_ID,
-        apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-        projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-        authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-        storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-        messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-      })
-    );
-  }
-
-  if (cache.has("FBAPP") && !cache.get("FBAUTH")) {
-    cache.set("FBAUTH", getAuth(cache.get("FBAPP")));
-  }
-
-  const auth = cache.get("FBAUTH");
-  const [signIn] = useSignInWithGoogle(auth);
-  const [userState, loadingState, errorState] = useAuthState(auth);
-
-  function signout() {
-    return signOut(cache.get("FBAUTH"));
-  }
-
-  async function signin(callback: VoidFunction) {
-    await signIn();
-    callback();
-  }
-
-  useEffect(() => {
-    if (!userState) {
+  const signout = useCallback(() => {
+    signOut(() => {
       setUser(null);
       setAuthenticated(false);
-    } else if (
-      !cache.get("ALLOWLIST").some((d: string) => userState?.email?.endsWith(d))
-    ) {
-      notify?.("your domain is not allowed to access this app");
-      deleteUser(userState);
-      setUser(null);
-    } else {
-      setUser(userState);
-      setAuthenticated(true);
-    }
-  }, [userState, notify]);
+    });
+  }, []);
 
   useEffect(() => {
-    setLoading(loadingState);
-  }, [loadingState]);
+    onAuthChange((user) => {
+      if (
+        user &&
+        adapters.get("ALLOWLIST").some((d: string) => user?.email?.endsWith(d))
+      ) {
+        setUser(user);
+        setLoading(false);
+        setAuthenticated(true);
+      } else if (user) {
+        setUser(null);
+        deleteUser(user);
+        setLoading(false);
+        setAuthenticated(false);
+        notify?.("your domain is not allowed ot access this app");
+      } else {
+        setUser(null);
+        setLoading(false);
+        setAuthenticated(false);
+      }
+    });
+  }, [notify]);
 
   useEffect(() => {
-    if (errorState) {
-      notify?.(errorState.message);
-    }
-  }, [errorState, notify]);
-
-  useEffect(() => {
-    if (authenticated) {
+    if (authenticated && signout) {
       const idleTime = 60 * 1000 * 60; // 1hour
       let timer: ReturnType<typeof setTimeout>;
       function signOutWhenIdle() {
         clearTimeout(timer);
         if (document.visibilityState === "hidden") {
           timer = setTimeout(() => signout(), idleTime);
+          return;
         }
       }
       document.addEventListener("visibilitychange", signOutWhenIdle);
       return () =>
         document.removeEventListener("visibilitychange", signOutWhenIdle);
     }
-  }, [authenticated]);
+  }, [authenticated, signout]);
 
   return (
     <AuthContext.Provider

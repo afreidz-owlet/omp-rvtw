@@ -7,6 +7,7 @@ import Owl from "./icons/Owl";
 
 export default function NavMenu() {
   const itemsClasses = cntl`
+    z-50
     w-60
     left-2
     top-16

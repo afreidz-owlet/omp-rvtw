@@ -1,5 +1,5 @@
 import cntl from "cntl";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import Owl from "../components/icons/Owl";
 import { useAuth } from "../contexts/Auth";
@@ -9,10 +9,13 @@ import DarkToggle from "../components/DarkToggle";
 export default function AuthPage(props: React.HTMLProps<HTMLElement>) {
   const auth = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = (location.state as any)?.from.pathname || "/";
+
 
   function handleSignin() {
     auth?.signin?.(() => {
-      navigate("/", { replace: true });
+      navigate(from, { replace: true });
     });
   }
 

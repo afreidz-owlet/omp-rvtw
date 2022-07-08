@@ -1,14 +1,15 @@
 import { User } from "firebase/auth";
-import { MockedFunction } from "vitest";
 import { fireEvent, renderHook, createEvent } from "@testing-library/react";
-import { useAuthState, useSignInWithGoogle } from "react-firebase-hooks/auth";
 
-const mockInit = vi.fn();
+type AuthChangeCB = (u: User | null) => void;
+
 const mockNotify = vi.fn();
-const mockCache = new Map();
-const mockGetAuth = vi.fn();
+const mockSignIn = vi.fn();
 const mockSignOut = vi.fn();
 const mockNavigate = vi.fn();
+const mockAdapters = new Map();
+const mockAuthChange = vi.fn();
+const mockDeleteUser = vi.fn();
 
 import AuthContext, { useAuth } from "../../contexts/Auth";
 
@@ -45,118 +46,76 @@ const mockUser: User = {
     }),
 };
 
-vi.mock("../../cache", () => ({ default: mockCache }));
+vi.mock("../../adapters", () => ({ default: mockAdapters }));
 
 vi.mock("react-router-dom", () => ({
   useNavigate: () => mockNavigate,
 }));
 
-vi.mock("react-firebase-hooks/auth", () => ({
-  useAuthState: vi.fn(),
-  useSignInWithGoogle: vi.fn(),
-}));
-
 vi.mock("firebase/app", () => ({
-  initializeApp: mockInit,
+  initializeApp: vi.fn(),
 }));
 
-vi.mock("firebase/auth", () => ({
-  deleteUser: vi.fn(),
-  getAuth: mockGetAuth,
+vi.mock("../../adapters/auth", () => ({
+  signin: mockSignIn,
   signOut: mockSignOut,
+  deleteUser: mockDeleteUser,
+  onAuthChange: mockAuthChange,
 }));
 
 vi.mock("../../contexts/Notifications", () => ({
+  default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   useNotifications: () => mockNotify,
 }));
 
 describe("Authentication Context", () => {
-  (useSignInWithGoogle as MockedFunction<any>).mockReturnValue([vi.fn()]);
-
-  mockCache.set("FBAPP", "test");
-  mockCache.set("FBAUTH", "test");
-  mockCache.set("ALLOWLIST", ["foo.com"]);
+  mockAdapters.set("FBAPP", "test");
+  mockAdapters.set("FBAUTH", "test");
+  mockAdapters.set("ALLOWLIST", ["foo.com"]);
 
   it("Should have a default state", () => {
-    (useAuthState as MockedFunction<any>).mockReturnValue([
-      null,
-      false,
-      undefined,
-    ]);
-
     const { result } = renderHook(() => useAuth(), { wrapper });
-    expect(mockInit).not.toHaveBeenCalled();
     expect(result.current?.user).toBeFalsy();
-    expect(mockGetAuth).not.toHaveBeenCalled();
-    expect(result.current?.loading).toBe(false);
+    expect(result.current?.loading).toBe(true);
   });
 
   it("Should handle authenticating a user", () => {
-    (useAuthState as MockedFunction<any>).mockReturnValue([
-      mockUser,
-      false,
-      undefined,
-    ]);
+    mockAuthChange.mockImplementation((cb?: AuthChangeCB) => cb?.(mockUser));
 
     const { result } = renderHook(() => useAuth(), { wrapper });
-    expect(mockNavigate).toHaveBeenCalledWith("/devices");
     expect(result.current?.user?.displayName).toBe("Test User");
   });
 
   it("Should handle users from incorrect domains", () => {
-    (useAuthState as MockedFunction<any>).mockReturnValue([
-      { ...mockUser, email: "test@bad-domain.com" },
-      false,
-      undefined,
-    ]);
+    mockAuthChange.mockImplementation((cb?: AuthChangeCB) =>
+      cb?.({ ...mockUser, email: "test@bad-domain.com" })
+    );
 
     const { result } = renderHook(() => useAuth(), { wrapper });
     expect(result.current?.user).toBeFalsy();
-    expect(mockNavigate).toHaveBeenCalledWith("/");
   });
 
-  it("should set cache values if they don't exist", () => {
-    (useAuthState as MockedFunction<any>).mockReturnValue([
-      mockUser,
-      false,
-      undefined,
-    ]);
-    mockCache.delete("FBAPP");
-    mockCache.delete("FBAUTH");
-    renderHook(() => useAuth(), { wrapper });
-    expect(mockInit).toHaveBeenCalled();
-    expect(mockGetAuth).toHaveBeenCalled();
+  it("Should handle no user", () => {
+    mockAuthChange.mockImplementation((cb?: AuthChangeCB) => cb?.(null));
+
+    const { result } = renderHook(() => useAuth(), { wrapper });
+    expect(result.current?.user).toBeFalsy();
   });
 
   it("should handle sign out", () => {
-    (useAuthState as MockedFunction<any>).mockReturnValue([
-      mockUser,
-      false,
-      undefined,
-    ]);
+    mockAuthChange.mockImplementation((cb?: AuthChangeCB) => cb?.(mockUser));
+    mockSignOut.mockImplementation((cb) => cb?.());
+
     const { result } = renderHook(() => useAuth(), { wrapper });
     expect(mockSignOut).not.toHaveBeenCalled();
     result.current?.signout?.();
     expect(mockSignOut).toHaveBeenCalled();
   });
 
-  it("should handle errors", () => {
-    (useAuthState as MockedFunction<any>).mockReturnValue([
-      mockUser,
-      false,
-      new Error("test"),
-    ]);
-    renderHook(() => useAuth(), { wrapper });
-    expect(mockNotify).toHaveBeenCalledWith("test");
-  });
-
   it("should handle idle", () => {
+    mockAuthChange.mockImplementation((cb?: AuthChangeCB) => cb?.(mockUser));
+
     mockSignOut.mockReset();
-    (useAuthState as MockedFunction<any>).mockReturnValue([
-      mockUser,
-      false,
-      undefined,
-    ]);
     renderHook(() => useAuth(), { wrapper });
 
     Object.defineProperty(document, "visibilityState", {

@@ -75,21 +75,21 @@ export default function Nav() {
       <li className="mb-px">
         <NavLink
           role="link"
-          to="/roles"
-          className={({ isActive }) => classes.link(isActive)}
-        >
-          <HandIcon className={classes.icon} />
-          <span className={classes.text}>Roles</span>
-        </NavLink>
-      </li>
-      <li className="mb-px">
-        <NavLink
-          role="link"
           to="/manufacturing"
           className={({ isActive }) => classes.link(isActive)}
         >
           <TruckIcon className={classes.icon} />
           <span className={classes.text}>Manufacturing</span>
+        </NavLink>
+      </li>
+      <li className="mb-px">
+        <NavLink
+          role="link"
+          to="/roles"
+          className={({ isActive }) => classes.link(isActive)}
+        >
+          <HandIcon className={classes.icon} />
+          <span className={classes.text}>Roles & Permissions</span>
         </NavLink>
       </li>
     </ul>

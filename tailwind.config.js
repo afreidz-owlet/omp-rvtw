@@ -20,6 +20,7 @@ module.exports = {
       },
       neutral: {
         0: "#ffffff",
+        100: "#303944",
         200: "#F2F2F2",
         400: "#E5E5E5",
         600: "#B5B5B5",
@@ -43,6 +44,7 @@ module.exports = {
         400: "#99D6E8",
         600: "#3BA1BD",
         800: "#16808F",
+        890: "#202A36",
         900: "#19232F",
       },
       "secondary-purple": {
@@ -52,5 +54,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/line-clamp")],
 };
